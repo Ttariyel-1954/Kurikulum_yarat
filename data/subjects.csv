@@ -1,0 +1,18 @@
+id,name_az,name_en,category,hours_per_week_min,hours_per_week_max
+1,Riyaziyyat,Mathematics,STEM,3,6
+2,Fizika,Physics,STEM,2,4
+3,Kimya,Chemistry,STEM,2,4
+4,Biologiya,Biology,STEM,2,4
+5,İnformatika,Computer Science,STEM,1,3
+6,Azərbaycan dili,Azerbaijani Language,Language,4,6
+7,Azərbaycan ədəbiyyatı,Azerbaijani Literature,Language,2,4
+8,İngilis dili,English Language,Language,2,4
+9,Rus dili,Russian Language,Language,2,3
+10,Tarix,History,Humanities,2,3
+11,Coğrafiya,Geography,Humanities,2,3
+12,Hüquq,Law,Humanities,1,2
+13,İqtisadiyyat,Economics,Humanities,1,2
+14,Rəsm,Art,Arts,1,2
+15,Musiqi,Music,Arts,1,2
+16,Bədən tərbiyəsi,Physical Education,Sports,2,3
+17,Texnologiya,Technology,Practical,1,2

@@ -1,0 +1,12 @@
+id,code,name_az,name_en,education_rank,specialty
+1,FI,Finlandiya,Finland,1,Ümumi keyfiyyət
+2,SG,Sinqapur,Singapore,2,STEM excellence
+3,EE,Estoniya,Estonia,3,Rəqəmsal təhsil
+4,CA,Kanada,Canada,4,İnklyuziv təhsil
+5,KR,Cənubi Koreya,South Korea,5,STEM və innovasiya
+6,JP,Yaponiya,Japan,6,Disiplin və keyfiyyət
+7,GB,Böyük Britaniya,United Kingdom,7,Cambridge sistem
+8,NL,Niderland,Netherlands,8,Kritik təfəkkür
+9,CH,İsveçrə,Switzerland,9,Çoxdilli təhsil
+10,AU,Avstraliya,Australia,10,Tətbiqi bacarıqlar
+11,AZ,Azərbaycan,Azerbaijan,0,Milli standartlar

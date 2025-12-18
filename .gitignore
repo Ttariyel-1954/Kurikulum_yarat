@@ -1,0 +1,71 @@
+# =============================================================================
+# KURIKULUM GENERATOR - Git Ignore
+# =============================================================================
+
+# API Keys & Secrets
+.env
+.Renviron
+*.key
+
+# Database
+database/*.db
+database/*.db-shm
+database/*.db-wal
+*.sqlite
+*.sqlite3
+
+# R Session
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Logs
+logs/*.log
+logs/*.txt
+
+# Exports
+exports/*.pdf
+exports/*.docx
+exports/*.html
+!exports/.gitkeep
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Cache
+cache/
+tmp/
+temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (if using)
+node_modules/
+package-lock.json
+
+# Python (if using)
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.env.sh
+.env
+*.sh
+
+# API Keys - CRITICAL
+.env
+.env.sh
+*.sh
+.Renviron

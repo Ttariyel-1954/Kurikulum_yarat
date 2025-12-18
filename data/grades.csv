@@ -1,0 +1,12 @@
+grade,level_az,level_en,age_range,stage
+1,I sinif,Grade 1,6-7,İbtidai
+2,II sinif,Grade 2,7-8,İbtidai
+3,III sinif,Grade 3,8-9,İbtidai
+4,IV sinif,Grade 4,9-10,İbtidai
+5,V sinif,Grade 5,10-11,Ümumi orta
+6,VI sinif,Grade 6,11-12,Ümumi orta
+7,VII sinif,Grade 7,12-13,Ümumi orta
+8,VIII sinif,Grade 8,13-14,Ümumi orta
+9,IX sinif,Grade 9,14-15,Ümumi orta
+10,X sinif,Grade 10,15-16,Tam orta
+11,XI sinif,Grade 11,16-17,Tam orta
