@@ -1,203 +1,180 @@
 # =============================================================================
-# KURIKULUM GENERATOR - MAIN APPLICATION
+# AI CURRICULUM GENERATOR - MAIN APP
 # =============================================================================
 
-# Load global configuration
 source("global.R")
-
-# Load modules
-source("modules/curriculum_generator.R", encoding = "UTF-8")
+source("modules/curriculum_generator.R")
 
 # =============================================================================
 # UI
 # =============================================================================
 
-ui <- dashboardPage(
+header <- dashboardHeader(
+  title = "AI Kurikulum Generator",
+  titleWidth = 300
+)
+
+sidebar <- dashboardSidebar(
+  width = 300,
+  sidebarMenu(
+    id = "tabs",
+    menuItem("🚀 Yeni Kurikulum", tabName = "generator", icon = icon("magic")),
+    menuItem("📚 Kurikulum Kitabxanası", tabName = "library", icon = icon("book")),
+    menuItem("📊 Statistika", tabName = "statistics", icon = icon("chart-bar")),
+    menuItem("⚙️ Parametrlər", tabName = "parameters", icon = icon("cog")),
+    menuItem("ℹ️ Haqqında", tabName = "about", icon = icon("info-circle"))
+  )
+)
+
+body <- dashboardBody(
   
-  # Header
-  dashboardHeader(
-    title = "🎓 Kurikulum Generator",
-    titleWidth = 300
+  tags$head(
+    tags$style(HTML("
+      .content-wrapper, .right-side { background-color: #ecf0f5; }
+      .box { border-radius: 8px; }
+      .small-box { border-radius: 8px; }
+      .view-btn, .delete-btn { padding: 4px 10px !important; font-size: 12px !important; }
+    "))
   ),
   
-  # Sidebar
-  dashboardSidebar(
-    width = 300,
-    sidebarMenu(
-      id = "sidebar_menu",
-      
-      menuItem("🚀 Yeni Kurikulum", 
-               tabName = "generator", 
-               icon = icon("magic")),
-      
-      menuItem("📚 Kurikulum Kitabxanası", 
-               tabName = "library", 
-               icon = icon("book")),
-      
-      menuItem("📊 Statistika", 
-               tabName = "statistics", 
-               icon = icon("chart-bar")),
-      
-      menuItem("⚙️ Parametrlər", 
-               tabName = "settings", 
-               icon = icon("cog")),
-      
-      menuItem("ℹ️ Haqqında", 
-               tabName = "about", 
-               icon = icon("info-circle"))
-    ),
+  tabItems(
     
-    hr(),
+    tabItem(tabName = "generator", curriculum_generator_ui("generator")),
     
-    # Info box
-    div(style = "padding: 15px; color: #ecf0f1; font-size: 0.9em;",
-        tags$p(style = "margin: 5px 0;",
-               icon("database"), " Database: OK"),
-        tags$p(style = "margin: 5px 0;",
-               icon("robot"), " AI: Claude + GPT"),
-        tags$p(style = "margin: 5px 0;",
-               icon("globe"), " Referans: 10 ölkə")
-    )
-  ),
-  
-  # Body
-  dashboardBody(
-    
-    # Custom CSS
-    tags$head(
-      tags$style(HTML("
-        .content-wrapper { background-color: #ecf0f1; }
-        .box { border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .info-box { border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .btn { border-radius: 8px; font-weight: 600; }
-        .main-header .logo { font-weight: bold; font-size: 18px; }
-      "))
-    ),
-    
-    tabItems(
-      
-      # Generator Tab
-      tabItem(
-        tabName = "generator",
-        curriculum_generator_ui("curriculum_gen")
-      ),
-      
-      # Library Tab
-      tabItem(
-        tabName = "library",
-        h2("Kurikulum Kitabxanası"),
-        p("Yaradılmış kurrikulumlar burada göstəriləcək."),
-        hr(),
-        
-        fluidRow(
-          column(12,
-                 box(
-                   title = "Kurikulum Siyahısı",
-                   status = "primary",
-                   solidHeader = TRUE,
-                   width = 12,
-                   DTOutput("library_table")
-                 )
-          )
-        )
-      ),
-      
-      # Statistics Tab
-      tabItem(
-        tabName = "statistics",
-        h2("📊 Statistika"),
-        
-        fluidRow(
-          infoBoxOutput("stat_total", width = 3),
-          infoBoxOutput("stat_subjects", width = 3),
-          infoBoxOutput("stat_grades", width = 3),
-          infoBoxOutput("stat_recent", width = 3)
-        ),
-        
-        fluidRow(
-          box(
-            title = "Fənn üzrə",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("plot_by_subject")
-          ),
-          box(
-            title = "Sinif üzrə",
-            status = "success",
-            solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("plot_by_grade")
-          )
-        )
-      ),
-      
-      # Settings Tab
-      tabItem(
-        tabName = "settings",
-        h2("⚙️ Parametrlər"),
-        
-        fluidRow(
-          box(
-            title = "AI Konfiqurasiyası",
-            status = "warning",
-            solidHeader = TRUE,
-            width = 6,
-            
-            p("API Keys .env faylında konfiqurasiya edilir."),
-            verbatimTextOutput("api_status")
-          ),
-          
-          box(
-            title = "Database",
-            status = "info",
-            solidHeader = TRUE,
-            width = 6,
-            
-            verbatimTextOutput("db_info")
-          )
-        )
-      ),
-      
-      # About Tab
-      tabItem(
-        tabName = "about",
-        h2("ℹ️ Haqqında"),
-        
+    tabItem(
+      tabName = "library",
+      fluidRow(
         box(
-          width = 12,
+          title = tagList(icon("book"), " Kurikulum Kitabxanası"),
           status = "primary",
-          
-          h3("🎓 Kurikulum Generator v1.0"),
-          p("Süni intellekt əsaslı professional təhsil kurikulumu generatoru."),
-          
-          hr(),
-          
-          h4("🌟 Xüsusiyyətlər:"),
-          tags$ul(
-            tags$li("Dual AI: Claude Sonnet 4.5 + GPT-5.1"),
-            tags$li("17 fənn, 11 sinif dəstəyi"),
-            tags$li("10 beynəlxalq ölkə standartları"),
-            tags$li("8-bölməli professional struktur"),
-            tags$li("PDF, DOCX, HTML export"),
-            tags$li("Azərbaycan Dövlət Standartlarına uyğun")
+          solidHeader = TRUE,
+          width = 12,
+          collapsible = TRUE,
+          div(style = "margin-bottom: 15px;",
+              p(icon("info-circle"), " Kurikuluma baxmaq üçün ", tags$b("'Bax'"), 
+                ", silmək üçün ", tags$b("'Sil'"), " düyməsinə basın.")
           ),
-          
-          hr(),
-          
-          h4("📚 Referans ölkələr:"),
-          p(paste(COUNTRIES$name_az, collapse = ", ")),
-          
-          hr(),
-          
-          h4("👨‍💻 Hazırlayan:"),
-          p("ARTI - Azerbaijan Republic Education Institute"),
-          p("Versiya: 1.0.0 | Tarix: December 2024")
+          DT::dataTableOutput("library_table")
+        )
+      )
+    ),
+    
+    tabItem(
+      tabName = "statistics",
+      h2(icon("chart-bar"), " Statistika", style = "margin-bottom: 20px;"),
+      fluidRow(
+        infoBoxOutput("total_curricula", width = 3),
+        infoBoxOutput("draft_curricula", width = 3),
+        infoBoxOutput("total_subjects", width = 3),
+        infoBoxOutput("total_grades", width = 3)
+      ),
+      fluidRow(
+        box(
+          title = "Fənnlərə görə kurikulumlar",
+          status = "primary",
+          solidHeader = TRUE,
+          width = 6,
+          plotlyOutput("chart_by_subject", height = 350)
+        ),
+        box(
+          title = "Siniflərə görə kurikulumlar",
+          status = "info",
+          solidHeader = TRUE,
+          width = 6,
+          plotlyOutput("chart_by_grade", height = 350)
+        )
+      )
+    ),
+    
+    tabItem(
+      tabName = "parameters",
+      h2(icon("cog"), " Sistem Parametrləri", style = "margin-bottom: 20px;"),
+      fluidRow(
+        box(
+          title = "API Status",
+          status = "primary",
+          solidHeader = TRUE,
+          width = 6,
+          div(style = "padding: 10px;",
+              h4(icon("robot"), " Claude API"),
+              p(textOutput("claude_status")),
+              hr(),
+              h4(icon("robot"), " GPT API"),
+              p(textOutput("gpt_status"))
+          )
+        ),
+        box(
+          title = "Database Məlumatı",
+          status = "info",
+          solidHeader = TRUE,
+          width = 6,
+          div(style = "padding: 10px;",
+              h4(icon("database"), " SQLite"),
+              p(tags$b("Path:"), textOutput("db_path", inline = TRUE)),
+              p(tags$b("Ölçü:"), textOutput("db_size", inline = TRUE)),
+              p(tags$b("Cədvəllər:"), "curricula, generation_logs, user_preferences")
+          )
+        )
+      ),
+      fluidRow(
+        box(
+          title = "Sistem Məlumatı",
+          status = "success",
+          solidHeader = TRUE,
+          width = 12,
+          div(style = "padding: 10px;",
+              h4("📦 Quraşdırılmış Paketlər"),
+              verbatimTextOutput("system_info")
+          )
+        )
+      )
+    ),
+    
+    tabItem(
+      tabName = "about",
+      fluidRow(
+        box(
+          title = tagList(icon("info-circle"), " Haqqında"),
+          status = "primary",
+          solidHeader = TRUE,
+          width = 12,
+          div(style = "padding: 20px; line-height: 1.8;",
+              h3("🎓 AI Kurikulum Generator"),
+              p("Azərbaycan təhsil sistemi üçün süni intellekt əsaslı professional kurikulum yaradıcısı."),
+              hr(),
+              h4("✨ Xüsusiyyətlər:"),
+              tags$ul(
+                tags$li("Dual AI: Claude Sonnet 4.5 və GPT-4o"),
+                tags$li("17 Fənn, 11 Sinif"),
+                tags$li("10 Beynəlxalq Referans Ölkə"),
+                tags$li("Professional HTML Export"),
+                tags$li("SQLite Database"),
+                tags$li("Statistika Dashboard")
+              ),
+              hr(),
+              p(tags$b("GitHub:"), " ", 
+                tags$a(href = "https://github.com/Ttariyel-1954/Kurikulum_yarat", 
+                       target = "_blank", "Ttariyel-1954/Kurikulum_yarat")),
+              p("© 2024 ARTI - Azerbaijan Republic Education Institute")
+          )
         )
       )
     )
-  )
+  ),
+  
+  tags$script(HTML("
+    $(document).on('click', '.view-btn', function() {
+      var id = $(this).data('id');
+      Shiny.setInputValue('view_curriculum', id, {priority: 'event'});
+    });
+    $(document).on('click', '.delete-btn', function() {
+      var id = $(this).data('id');
+      Shiny.setInputValue('delete_curriculum', id, {priority: 'event'});
+    });
+  "))
 )
+
+ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
 # =============================================================================
 # SERVER
@@ -205,136 +182,212 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   
-  # Generator Module
-  curriculum_generator_server("curriculum_gen")
+  curriculum_generator_server("generator")
   
-  # Library Table
-  output$library_table <- renderDT({
+  # ========================================================================
+  # LIBRARY
+  # ========================================================================
+  
+  rv_library <- reactiveValues(refresh = 0, delete_id = NULL)
+  
+  output$library_table <- DT::renderDataTable({
+    rv_library$refresh
     curricula <- get_all_curricula()
-    
     if (nrow(curricula) == 0) {
-      return(datatable(data.frame(Mesaj = "Hələ kurikulum yaradılmayıb")))
+      return(data.frame(Məlumat = "Hələ kurikulum yaradılmayıb"))
     }
-    
-    display <- curricula %>%
-      select(name, subject_name, grade, academic_year, status, created_at) %>%
-      mutate(created_at = format(as.POSIXct(created_at), "%d.%m.%Y %H:%M"))
-    
-    names(display) <- c("Ad", "Fənn", "Sinif", "Tədris ili", "Status", "Yaradılma")
-    
-    datatable(
-      display,
-      options = list(
-        pageLength = 15,
-        language = list(
-          search = "Axtar:",
-          lengthMenu = "Göstər _MENU_",
-          info = "_TOTAL_ nəticədən _START_ - _END_"
+    curricula$Əməliyyatlar <- sprintf(
+      '<button class="btn btn-info btn-sm view-btn" data-id="%s" style="margin-right: 5px;">
+        <i class="fa fa-eye"></i> Bax
+      </button>
+      <button class="btn btn-danger btn-sm delete-btn" data-id="%s">
+        <i class="fa fa-trash"></i> Sil
+      </button>',
+      curricula$id, curricula$id
+    )
+    display_data <- curricula[, c("id", "name", "subject_name", "grade", 
+                                   "academic_year", "ai_model", "created_at", "Əməliyyatlar")]
+    colnames(display_data) <- c("ID", "Ad", "Fənn", "Sinif", "Tədris ili", "AI Model", "Yaradılma", "Əməliyyatlar")
+    DT::datatable(display_data, options = list(pageLength = 10, columnDefs = list(
+      list(width = '50px', targets = 0), list(width = '160px', targets = 7)
+    )), escape = FALSE, selection = 'none', rownames = FALSE)
+  })
+  
+  observeEvent(input$view_curriculum, {
+    curriculum_id <- input$view_curriculum
+    if (is.null(curriculum_id) || curriculum_id == "") return()
+    curriculum <- get_curriculum_by_id(as.integer(curriculum_id))
+    if (is.null(curriculum)) {
+      showNotification("⚠️ Kurikulum tapılmadı!", type = "error", duration = 3)
+      return()
+    }
+    showModal(modalDialog(
+      title = tagList(icon("eye"), " ", curriculum$name),
+      div(style = "padding: 10px;",
+        div(style = "background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;",
+            fluidRow(
+              column(3, p(tags$b("Fənn:"), " ", curriculum$subject_name)),
+              column(3, p(tags$b("Sinif:"), " ", curriculum$grade)),
+              column(3, p(tags$b("AI:"), " ", curriculum$ai_model)),
+              column(3, p(tags$b("Tarix:"), " ", substr(curriculum$created_at, 1, 10)))
+            )
+        ),
+        div(style = "max-height: 500px; overflow-y: auto; background: #fafafa; padding: 20px; border-radius: 8px; border: 2px solid #0284c7;",
+            pre(style = "white-space: pre-wrap; font-family: 'Segoe UI'; line-height: 1.7; font-size: 0.95em;",
+                curriculum$content_structure)
         )
       ),
-      rownames = FALSE
-    )
+      footer = tagList(modalButton("Bağla", icon = icon("times"))),
+      easyClose = TRUE, size = "l"
+    ))
   })
   
-  # Statistics
-  stats <- reactive({
-    get_curriculum_statistics()
+  observeEvent(input$delete_curriculum, {
+    curriculum_id <- input$delete_curriculum
+    if (is.null(curriculum_id) || curriculum_id == "") return()
+    curriculum <- get_curriculum_by_id(as.integer(curriculum_id))
+    if (is.null(curriculum)) {
+      showNotification("⚠️ Kurikulum tapılmadı!", type = "error", duration = 3)
+      return()
+    }
+    showModal(modalDialog(
+      title = tagList(icon("exclamation-triangle"), " Təsdiq"),
+      div(style = "padding: 20px;",
+        h4(style = "color: #d32f2f; margin-top: 0;", "Bu kurikulumu silmək istədiyinizdən əminsiniz?"),
+        hr(),
+        div(style = "background: #f5f5f5; padding: 15px; border-radius: 8px;",
+            p(style = "margin: 5px 0;", tags$b("Ad:"), " ", curriculum$name),
+            p(style = "margin: 5px 0;", tags$b("Fənn:"), " ", curriculum$subject_name),
+            p(style = "margin: 5px 0;", tags$b("Sinif:"), " ", curriculum$grade),
+            p(style = "margin: 5px 0;", tags$b("Yaradılma:"), " ", curriculum$created_at)
+        ),
+        hr(),
+        div(style = "background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #d32f2f;",
+            p(style = "color: #d32f2f; font-weight: bold; margin: 0;", 
+              icon("exclamation-triangle"), " Bu əməliyyat geri qaytarıla bilməz!")
+        )
+      ),
+      footer = tagList(
+        modalButton("Ləğv et", icon = icon("times")),
+        actionButton("confirm_delete", label = tagList(icon("trash"), " Sil"),
+                     class = "btn btn-danger", style = "font-weight: bold;")
+      ),
+      easyClose = TRUE, size = "m"
+    ))
+    rv_library$delete_id <- as.integer(curriculum_id)
   })
   
-  output$stat_total <- renderInfoBox({
-    infoBox(
-      "Ümumi",
-      stats()$total,
-      icon = icon("book"),
-      color = "purple"
-    )
+  observeEvent(input$confirm_delete, {
+    curriculum_id <- rv_library$delete_id
+    if (is.null(curriculum_id)) return()
+    tryCatch({
+      result <- delete_curriculum(curriculum_id)
+      if (result) {
+        showNotification("✅ Kurikulum uğurla silindi!", type = "message", duration = 3)
+        rv_library$refresh <- rv_library$refresh + 1
+      } else {
+        showNotification("❌ Silinmə zamanı xəta!", type = "error", duration = 5)
+      }
+      removeModal()
+    }, error = function(e) {
+      showNotification(paste("❌ Xəta:", as.character(e)), type = "error", duration = 5)
+      removeModal()
+    })
   })
   
-  output$stat_subjects <- renderInfoBox({
-    infoBox(
-      "Fənn",
-      nrow(stats()$by_subject),
-      icon = icon("layer-group"),
-      color = "blue"
-    )
+  # ========================================================================
+  # STATISTICS - FIXED
+  # ========================================================================
+  
+  stats_data <- reactive({ get_curriculum_statistics() })
+  
+  output$total_curricula <- renderInfoBox({
+    stats <- stats_data()
+    infoBox("Ümumi", stats$total, icon = icon("book"), color = "blue")
   })
   
-  output$stat_grades <- renderInfoBox({
-    infoBox(
-      "Sinif",
-      nrow(stats()$by_grade),
-      icon = icon("graduation-cap"),
-      color = "green"
-    )
+  output$draft_curricula <- renderInfoBox({
+    stats <- stats_data()
+    draft_count <- if(!is.null(stats$by_status) && "draft" %in% names(stats$by_status)) {
+      as.integer(stats$by_status[["draft"]])
+    } else {
+      0
+    }
+    infoBox("Draft", draft_count, icon = icon("edit"), color = "yellow")
   })
   
-  output$stat_recent <- renderInfoBox({
-    infoBox(
-      "Son 7 gün",
-      stats()$recent,
-      icon = icon("clock"),
-      color = "orange"
-    )
+  output$total_subjects <- renderInfoBox({
+    stats <- stats_data()
+    subject_count <- if(!is.null(stats$by_subject)) length(stats$by_subject) else 0
+    infoBox("Fənnlər", subject_count, icon = icon("graduation-cap"), color = "green")
   })
   
-  output$plot_by_subject <- renderPlotly({
-    data <- stats()$by_subject
-    
-    if (nrow(data) == 0) return(NULL)
-    
-    plot_ly(data, x = ~count, y = ~reorder(subject_name, count),
-            type = 'bar', orientation = 'h',
-            marker = list(color = '#667eea')) %>%
-      layout(xaxis = list(title = "Say"),
-             yaxis = list(title = ""))
+  output$total_grades <- renderInfoBox({
+    stats <- stats_data()
+    grade_count <- if(!is.null(stats$by_grade)) length(stats$by_grade) else 0
+    infoBox("Siniflər", grade_count, icon = icon("users"), color = "purple")
   })
   
-  output$plot_by_grade <- renderPlotly({
-    data <- stats()$by_grade
-    
-    if (nrow(data) == 0) return(NULL)
-    
-    plot_ly(data, x = ~as.factor(grade), y = ~count,
-            type = 'bar',
-            marker = list(color = '#10b981')) %>%
-      layout(xaxis = list(title = "Sinif"),
-             yaxis = list(title = "Say"))
+  output$chart_by_subject <- renderPlotly({
+    stats <- stats_data()
+    if (is.null(stats$by_subject) || length(stats$by_subject) == 0) {
+      return(plot_ly() %>% layout(title = list(text = "Məlumat yoxdur", font = list(size = 16))))
+    }
+    df <- data.frame(subject = names(stats$by_subject), count = as.numeric(stats$by_subject), stringsAsFactors = FALSE)
+    plot_ly(df, x = ~subject, y = ~count, type = "bar", marker = list(color = "#0284c7")) %>%
+      layout(xaxis = list(title = "Fənn", tickangle = -45), yaxis = list(title = "Say"), margin = list(b = 120))
   })
   
-  # API Status
-  output$api_status <- renderText({
-    claude_status <- ifelse(CONFIG$anthropic_key != "" && 
-                              CONFIG$anthropic_key != "your_claude_api_key_here",
-                            "✅ Konfiqurasiya edilib", 
-                            "❌ Konfiqurasiya edilməyib")
-    
-    gpt_status <- ifelse(CONFIG$openai_key != "" && 
-                           CONFIG$openai_key != "your_openai_api_key_here",
-                         "✅ Konfiqurasiya edilib", 
-                         "❌ Konfiqurasiya edilməyib")
-    
-    paste0(
-      "Claude API: ", claude_status, "\n",
-      "GPT API: ", gpt_status, "\n",
-      "Model: ", CONFIG$claude_model
-    )
+  output$chart_by_grade <- renderPlotly({
+    stats <- stats_data()
+    if (is.null(stats$by_grade) || length(stats$by_grade) == 0) {
+      return(plot_ly() %>% layout(title = list(text = "Məlumat yoxdur", font = list(size = 16))))
+    }
+    df <- data.frame(grade = names(stats$by_grade), count = as.numeric(stats$by_grade), stringsAsFactors = FALSE)
+    df$grade <- factor(df$grade, levels = as.character(sort(as.numeric(df$grade))))
+    plot_ly(df, x = ~grade, y = ~count, type = "bar", marker = list(color = "#10b981")) %>%
+      layout(xaxis = list(title = "Sinif"), yaxis = list(title = "Say"))
   })
   
-  # DB Info
-  output$db_info <- renderText({
-    stats <- stats()
-    
-    paste0(
-      "Database yolu: ", CONFIG$db_path, "\n",
-      "Ümumi kurikulum: ", stats$total, "\n",
-      "Database ölçüsü: ", 
-      format(file.info(CONFIG$db_path)$size / 1024, digits = 2), " KB"
-    )
+  # ========================================================================
+  # PARAMETERS
+  # ========================================================================
+  
+  output$claude_status <- renderText({
+    if (CONFIG$anthropic_key != "" && CONFIG$anthropic_key != "your_claude_api_key_here") {
+      "✅ Konfiqurasiya edilib"
+    } else {
+      "❌ API key yoxdur"
+    }
+  })
+  
+  output$gpt_status <- renderText({
+    if (CONFIG$openai_key != "" && CONFIG$openai_key != "your_openai_api_key_here") {
+      "✅ Konfiqurasiya edilib"
+    } else {
+      "⚠️ API key yoxdur (optional)"
+    }
+  })
+  
+  output$db_path <- renderText({ CONFIG$db_path })
+  
+  output$db_size <- renderText({
+    if (file.exists(CONFIG$db_path)) {
+      paste(round(file.size(CONFIG$db_path) / 1024, 2), "KB")
+    } else {
+      "Database yoxdur"
+    }
+  })
+  
+  output$system_info <- renderPrint({
+    cat("R Version:", R.version.string, "\n")
+    cat("Platform:", R.version$platform, "\n\n")
+    cat("Paketlər:\n")
+    cat("- shiny:", as.character(packageVersion("shiny")), "\n")
+    cat("- DT:", as.character(packageVersion("DT")), "\n")
+    cat("- plotly:", as.character(packageVersion("plotly")), "\n")
+    cat("- RSQLite:", as.character(packageVersion("RSQLite")), "\n")
   })
 }
 
-# =============================================================================
-# RUN APP
-# =============================================================================
-
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
